@@ -62,14 +62,19 @@ export default function RestaurantLocator() {
 
   // --- Firebase-first: instant, free, no API call --------------------
   const inPipelineForArea = useMemo(() => {
-    const areaLower = targetArea.toLowerCase();
-    const stateLower = state.toLowerCase();
-    return restaurants.filter((r) =>
-      r.outlets.some((o) => o.location.toLowerCase().includes(areaLower)) ||
-      r.outlets.some((o) => o.location.toLowerCase().includes(stateLower)) ||
-      r.notes.toLowerCase().includes(areaLower)
-    );
-  }, [restaurants, targetArea, state]);
+  const areaLower = String(targetArea || "").toLowerCase();
+  const stateLower = String(state || "").toLowerCase();
+
+  return restaurants.filter((r) =>
+    (r.outlets ?? []).some((o) =>
+      String(o?.location || "").toLowerCase().includes(areaLower)
+    ) ||
+    (r.outlets ?? []).some((o) =>
+      String(o?.location || "").toLowerCase().includes(stateLower)
+    ) ||
+    String(r.notes || "").toLowerCase().includes(areaLower)
+  );
+}, [restaurants, targetArea, state]);
 
   const nameMatchesInPipeline = useMemo(() => {
     if (!nameQuery.trim()) return [];
