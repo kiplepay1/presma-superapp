@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --c-paper: 246 247 245;
+  --c-surface: 255 255 255;
+  --c-border: 226 228 224;
+  --c-border-strong: 203 207 201;
+  --c-ink: 18 24 31;
+  --c-ink-soft: 58 68 80;
+  --c-ink-faint: 107 116 128;
+  --c-brand-50: 234 244 241;
+  --c-brand-100: 207 230 222;
+  --c-brand-300: 127 187 169;
+  --c-brand-500: 14 107 92;
+  --c-brand-600: 11 90 77;
+  --c-brand-700: 8 72 63;
+  --c-brand-900: 5 46 40;
+  --c-green: 31 138 95;
+  --c-green-bg: 231 245 238;
+  --c-amber: 183 121 31;
+  --c-amber-bg: 251 242 226;
+  --c-red: 192 57 43;
+  --c-red-bg: 251 234 232;
+  --c-blue: 29 78 137;
+  --c-blue-bg: 234 240 248;
+  --c-grey: 107 116 128;
+  --c-grey-bg: 238 240 238;
+}
+
+.dark {
+  --c-paper: 14 18 17;
+  --c-surface: 23 29 27;
+  --c-border: 42 50 46;
+  --c-border-strong: 60 71 65;
+  --c-ink: 231 235 230;
+  --c-ink-soft: 172 181 174;
+  --c-ink-faint: 124 135 126;
+  --c-brand-50: 22 41 36;
+  --c-brand-100: 28 55 47;
+  --c-brand-300: 107 173 152;
+  --c-brand-500: 45 163 138;
+  --c-brand-600: 62 181 155;
+  --c-brand-700: 148 219 197;
+  --c-brand-900: 216 240 231;
+  --c-green: 92 199 155;
+  --c-green-bg: 22 46 36;
+  --c-amber: 224 172 84;
+  --c-amber-bg: 51 41 18;
+  --c-red: 224 108 96;
+  --c-red-bg: 54 26 23;
+  --c-blue: 122 168 224;
+  --c-blue-bg: 22 33 49;
+  --c-grey: 150 158 152;
+  --c-grey-bg: 35 41 37;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: rgb(var(--c-paper));
+  color: rgb(var(--c-ink));
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+::selection { background: rgb(var(--c-brand-100)); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(var(--c-border-strong)); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-ink-faint)); }
+
+:focus-visible {
+  outline: 2px solid rgb(var(--c-brand-500));
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  html, body, #root { height: auto !important; overflow: visible !important; background: #fff !important; }
+  .app-shell { display: block !important; height: auto !important; }
+  .app-sidebar, .app-topbar, .no-print { display: none !important; }
+  .app-main { overflow: visible !important; height: auto !important; padding: 0 !important; }
+  * { box-shadow: none !important; }
+}
