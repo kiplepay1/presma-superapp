@@ -163,7 +163,7 @@ export default function RestaurantLocator() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-semibold">Restaurant Locator</h1>
-        <p className="text-sm text-ink-faint">Checks your PRESMA pipeline first — Geoapify is only called when you click "Discover more."</p>
+        <p className="text-sm text-ink-faint">Checks your Restaurant pipeline first — Geoapify is only called when you click "Discover more."</p>
       </div>
 
       <div className="flex flex-wrap items-end gap-3 rounded border border-border bg-surface p-4 shadow-card">
@@ -269,7 +269,7 @@ export default function RestaurantLocator() {
                 <div className="mt-1 text-[10px] text-ink-faint">Source: Geoapify (OpenStreetMap){matches.length > 0 && <span className="ml-1 text-status-amber">· possibly already saved</span>}</div>
                 <div className="mt-2 flex items-center gap-2">
                   <button onClick={() => handleAddClick(p)} className="flex items-center gap-1 rounded bg-brand-500 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-brand-600">
-                    <Plus size={13} /> Add to PRESMA
+                    <Plus size={13} /> Add to List
                   </button>
                   <a href={googleSearchUrl(p.name, p.address)} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-ink-faint hover:text-brand-600 hover:underline">
                     <ExternalLink size={12} /> Check on Google Maps
