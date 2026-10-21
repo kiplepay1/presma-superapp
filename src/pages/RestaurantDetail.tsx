@@ -108,7 +108,7 @@ export default function RestaurantDetail() {
         <SectionCard title="Profile">
           <dl className="space-y-2 text-sm">
             <Row k="Phone" v={r.ownerPhone || "—"} /><Row k="Email" v={r.ownerEmail || "—"} />
-            <Row k="Business Type" v={r.businessType} /><Row k="Registration No." v={r.registrationNo || "—"} />
+            <Row k="Business Type" v={r.businessType} /> <Row k="POS Vendor" v={r.posVendorName || "—"} /><Row k="Registration No." v={r.registrationNo || "—"} />
             <Row k="Created" v={new Date(r.createdAt).toLocaleDateString()} />
             <Row k="Assigned BD" v={r.assignedBD || "—"} /><Row k="Assigned Ops" v={r.assignedOps || "—"} /><Row k="Assigned Tech" v={r.assignedTech || "—"} />
           </dl>

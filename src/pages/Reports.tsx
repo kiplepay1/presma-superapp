@@ -1,13 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { FileText } from "lucide-react";
 import { useRestaurants } from "../lib/useRestaurants";
+import { useVendors } from "../lib/useVendors";
+import { useAuth } from "../lib/AuthContext";
+import { computeVendorUsage } from "../lib/vendorStats";
 import { buildRecommendations } from "../lib/agents";
 import { SectionCard } from "../components/Cards";
-import { PipelineFunnel, SlaPerformanceChart, RiskDistributionChart } from "../components/Charts";
+import { PipelineFunnel, SlaPerformanceChart, RiskDistributionChart, VendorDistributionChart } from "../components/Charts";
 
 export default function Reports() {
   const navigate = useNavigate();
   const { restaurants, loading } = useRestaurants();
+  const { isAdmin } = useAuth();
+  const { vendors } = useVendors();
+  const { usage, notSet } = computeVendorUsage(restaurants, vendors);
+  const vendorChartData = [...usage.map((u) => ({ name: u.name, count: u.count })), ...(notSet > 0 ? [{ name: "Not set", count: notSet }] : [])];
   const recs = buildRecommendations(restaurants);
   const live = restaurants.filter((r) => r.stage === "Hypercare" || r.stage === "BAU Handover" || r.stage === "Go-Live").length;
   const pendingReview = restaurants.filter((r) => r.approvalStatus !== "approved").length;
@@ -43,6 +50,19 @@ export default function Reports() {
               </ul>
             </SectionCard>
           </div>
+
+          {isAdmin && (
+            <SectionCard title="POS / Integration Vendor Distribution (admin only)">
+              {vendorChartData.length === 0 ? (
+                <p className="text-sm text-ink-faint">No vendor data yet — set a POS vendor on a restaurant to see it here.</p>
+              ) : (
+                <VendorDistributionChart data={vendorChartData} />
+              )}
+              <p className="mt-2 text-xs text-ink-faint">
+                {vendors.filter((v) => v.type === "main").length} main vendor(s) and {vendors.filter((v) => v.type === "integration").length} integration vendor(s) in the directory.
+              </p>
+            </SectionCard>
+          )}
 
           <SectionCard title="Flagged Issues">
             {recs.length === 0 ? <p className="text-sm text-ink-faint">Nothing flagged right now.</p> : (

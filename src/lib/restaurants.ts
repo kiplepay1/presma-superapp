@@ -27,6 +27,8 @@ function normalizeRestaurant(raw: any): Restaurant {
     notes: raw.notes ?? "",
     surveyUrl: raw.surveyUrl ?? "",
     logoUrl: raw.logoUrl ?? "",
+    posVendorId: raw.posVendorId ?? "",
+    posVendorName: raw.posVendorName ?? "",
     // Migrates the old single meetingPhotoUrl field (pre-multi-photo) into
     // the new array format, so nothing already saved gets lost.
     meetingPhotoUrls: raw.meetingPhotoUrls ?? (raw.meetingPhotoUrl ? [raw.meetingPhotoUrl] : []),
@@ -179,14 +181,14 @@ export async function setRestaurantApproval(
 export async function exportRestaurantsCsv(): Promise<string> {
   const snap = await getDocs(collection(db, COLLECTION));
   const rows = snap.docs.map((d) => normalizeRestaurant(d.data()));
-  const headers = ["ID", "Name", "Owner", "Phone", "Email", "Business Type", "Registration No", "Outlet Count", "Outlets", "Stage", "Risk", "Assigned BD", "Assigned Ops", "Assigned Tech", "Approval Status", "Survey Document", "Created By", "Created At"];
+  const headers = ["ID", "Name", "Owner", "Phone", "Email", "Business Type", "Registration No", "Outlet Count", "Outlets", "Stage", "Risk", "Assigned BD", "Assigned Ops", "Assigned Tech", "Approval Status", "POS Vendor", "Survey Document", "Created By", "Created At"];
   const lines = [headers.join(",")];
   rows.forEach((r) => {
     const outletsSummary = r.outlets.map((o) => `${o.location} (${o.status})`).join("; ");
     lines.push([
       r.id, r.name, r.ownerName, r.ownerPhone, r.ownerEmail, r.businessType, r.registrationNo,
       String(r.outlets.length), `"${outletsSummary}"`, r.stage, r.riskLevel, r.assignedBD, r.assignedOps, r.assignedTech,
-      r.approvalStatus, r.surveyUrl || "", r.createdBy, new Date(r.createdAt).toISOString(),
+      r.approvalStatus, r.posVendorName || "", r.surveyUrl || "", r.createdBy, new Date(r.createdAt).toISOString(),
     ].map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(","));
   });
   return lines.join("\n");

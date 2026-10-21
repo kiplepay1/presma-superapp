@@ -59,3 +59,17 @@ export function RiskDistributionChart({ restaurants }: { restaurants: Restaurant
     </ResponsiveContainer>
   );
 }
+
+export function VendorDistributionChart({ data }: { data: { name: string; count: number }[] }) {
+  return (
+    <ResponsiveContainer width="100%" height={Math.max(160, data.length * 34 + 30)}>
+      <BarChart data={data} layout="vertical" margin={{ left: 8, right: 16 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--c-border))" horizontal={false} />
+        <XAxis type="number" tick={{ fontSize: 11, fill: "rgb(var(--c-ink-faint))" }} allowDecimals={false} />
+        <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 12, fill: "rgb(var(--c-ink))" }} />
+        <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid rgb(var(--c-border))", background: "rgb(var(--c-surface))" }} />
+        <Bar dataKey="count" fill="#1D4E89" radius={[0, 3, 3, 0]} barSize={18} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}

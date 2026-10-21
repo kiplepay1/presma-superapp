@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { STAGE_NAMES, type NewRestaurantInput, type Restaurant, type RiskLevel } from "../types";
+import { useVendors } from "../lib/useVendors";
 
 const BUSINESS_TYPES = ["Sole Proprietorship", "Partnership", "Sdn Bhd"] as const;
 const RISK_LEVELS: RiskLevel[] = ["Low", "Medium", "High"];
@@ -9,7 +10,7 @@ const emptyForm: NewRestaurantInput = {
   name: "", ownerName: "", ownerPhone: "", ownerEmail: "",
   businessType: "Sole Proprietorship", registrationNo: "",
   outlets: [], stage: "Pilot Agreement", riskLevel: "Low",
-  assignedBD: "", assignedOps: "", assignedTech: "", notes: "", surveyUrl: "", logoUrl: "", meetingPhotoUrls: [],
+  assignedBD: "", assignedOps: "", assignedTech: "", notes: "", surveyUrl: "", logoUrl: "", meetingPhotoUrls: [], posVendorId: "", posVendorName: "",
 };
 
 export default function RestaurantForm({
@@ -27,9 +28,22 @@ export default function RestaurantForm({
       stage: initial.stage, riskLevel: initial.riskLevel, assignedBD: initial.assignedBD,
       assignedOps: initial.assignedOps, assignedTech: initial.assignedTech, notes: initial.notes,
       surveyUrl: initial.surveyUrl ?? "", logoUrl: initial.logoUrl ?? "", meetingPhotoUrls: initial.meetingPhotoUrls ?? [],
+      posVendorId: initial.posVendorId ?? "", posVendorName: initial.posVendorName ?? "",
     } : { ...emptyForm, ...prefill }
   );
   const [meetingPhotoInput, setMeetingPhotoInput] = useState("");
+  const { vendors } = useVendors();
+  const posVendors = vendors.filter((v) => v.type === "integration");
+  // "Other" = a vendor name typed in by staff that isn't (or isn't yet) in the admin's directory
+  const [otherVendor, setOtherVendor] = useState<boolean>(Boolean(form.posVendorName) && !form.posVendorId);
+  const vendorSelectValue = otherVendor ? "__other__" : form.posVendorId;
+  const handleVendorSelect = (value: string) => {
+    if (value === "__other__") { setOtherVendor(true); setForm((f) => ({ ...f, posVendorId: "", posVendorName: "" })); return; }
+    setOtherVendor(false);
+    if (!value) { setForm((f) => ({ ...f, posVendorId: "", posVendorName: "" })); return; }
+    const v = posVendors.find((x) => x.id === value);
+    setForm((f) => ({ ...f, posVendorId: value, posVendorName: v?.name ?? f.posVendorName }));
+  };
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -141,6 +155,24 @@ export default function RestaurantForm({
               <label className={labelCls}>Assigned Tech</label>
               <input className={inputCls} value={form.assignedTech} onChange={(e) => set("assignedTech", e.target.value)} />
             </div>
+          </div>
+
+          <div>
+            <label className={labelCls}>POS / Integration Vendor <span className="text-ink-faint">(the POS system this restaurant uses, e.g. DodoPOS)</span></label>
+            <select className={inputCls} value={vendorSelectValue} onChange={(e) => handleVendorSelect(e.target.value)}>
+              <option value="">— Not set —</option>
+              {posVendors.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
+              {!otherVendor && form.posVendorId && !posVendors.some((v) => v.id === form.posVendorId) && (
+                <option value={form.posVendorId}>{form.posVendorName || form.posVendorId}</option>
+              )}
+              <option value="__other__">Other (type the name)…</option>
+            </select>
+            {otherVendor && (
+              <input
+                className={`${inputCls} mt-2`} value={form.posVendorName}
+                onChange={(e) => set("posVendorName", e.target.value)} placeholder="e.g. DodoPOS"
+              />
+            )}
           </div>
 
           <div>

@@ -15,6 +15,7 @@ import Reports from "./pages/Reports";
 import ReportPrint from "./pages/ReportPrint";
 import Settings from "./pages/Settings";
 import AdminAccess from "./pages/AdminAccess";
+import Vendors from "./pages/Vendors";
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
               <Route path="/reports" element={<Reports />} />
               <Route path="/reports/print" element={<ReportPrint />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/vendors" element={<Vendors />} />
               <Route path="/admin/access" element={<AdminAccess />} />
             </Routes>
           </Shell>

@@ -117,6 +117,8 @@ export interface Restaurant {
   surveyUrl: string; // link to externally-hosted survey PDF (e.g. OneDrive), optional
   logoUrl: string; // link to externally-hosted restaurant logo image, optional
   meetingPhotoUrls: string[]; // links to externally-hosted photos from the survey visit, optional
+  posVendorId: string; // id of the POS/integration vendor this restaurant uses (from the vendor directory), "" if none or typed in manually
+  posVendorName: string; // vendor name as shown/reported — stored on the restaurant so reports and detail pages never depend on the directory entry still existing
   approvalStatus: ApprovalStatus;
   approvalNote: string; // admin's note when rejecting / requesting edits
   createdBy: string; // email of whoever added the record
@@ -166,3 +168,22 @@ export interface AgentDef {
   automationLevel: "Monitor" | "Recommend" | "Flag & Escalate";
   humanApprovalRequired: boolean;
 }
+
+// --- Vendors (admin-managed directory) ---------------------------------
+// "main"        = providers of PRESMA platform features (payments, hosting, etc.)
+// "integration" = API-integrated vendors that individual restaurants use, e.g. POS systems
+export type VendorType = "main" | "integration";
+
+export interface Vendor {
+  id: string;
+  name: string;
+  type: VendorType;
+  category: string; // free text, e.g. "Payments", "POS", "Loyalty"
+  description: string;
+  contactPerson: string;
+  website: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export type NewVendorInput = Omit<Vendor, "id" | "createdAt" | "updatedAt">;

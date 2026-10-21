@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Printer, Download, ClipboardCheck } from "lucide-react";
 import { useRestaurants } from "../lib/useRestaurants";
+import { useVendors } from "../lib/useVendors";
+import { computeVendorUsage } from "../lib/vendorStats";
 import { useAuth } from "../lib/AuthContext";
 import { buildRecommendations } from "../lib/agents";
 import { overallStatusFor } from "../types";
@@ -8,9 +10,12 @@ import { StatusBadge, RiskPill } from "../components/Badges";
 
 export default function ReportPrint() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
+  const { vendors } = useVendors();
   const { restaurants, loading } = useRestaurants();
   const recs = buildRecommendations(restaurants);
+  const { usage: vendorUsage, notSet: vendorNotSet } = computeVendorUsage(restaurants, vendors);
+  const mainVendors = vendors.filter((v) => v.type === "main");
 
   const live = restaurants.filter((r) => ["Hypercare", "BAU Handover", "Go-Live"].includes(r.stage)).length;
   const pendingReview = restaurants.filter((r) => r.approvalStatus !== "approved").length;
@@ -74,6 +79,34 @@ export default function ReportPrint() {
             )}
           </tbody>
         </table>
+
+        {isAdmin && (
+          <>
+            <h3 className="mb-2 text-sm font-semibold">Vendors</h3>
+            <p className="mb-2 text-xs text-ink-faint">Main vendors (platform providers): {mainVendors.length === 0 ? "none recorded" : mainVendors.map((v) => v.name + (v.category ? ` (${v.category})` : "")).join(", ")}.</p>
+            <table className="mb-6 w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-border text-[11px] uppercase tracking-wide text-ink-faint">
+                  <th className="py-1.5 font-medium">POS / Integration Vendor</th><th className="py-1.5 font-medium">Restaurants</th><th className="py-1.5 font-medium">Share</th>
+                </tr>
+              </thead>
+              <tbody>
+                {vendorUsage.map((u) => (
+                  <tr key={u.key} className="border-b border-border last:border-0">
+                    <td className="py-1.5 font-medium">{u.name}{u.vendorId === null && <span className="ml-1 text-xs text-ink-faint">(not in directory)</span>}</td>
+                    <td className="py-1.5">{u.count}</td>
+                    <td className="py-1.5 text-ink-soft">{restaurants.length ? Math.round((u.count / restaurants.length) * 100) : 0}%</td>
+                  </tr>
+                ))}
+                <tr className="border-b border-border last:border-0">
+                  <td className="py-1.5 text-ink-faint">No vendor set</td>
+                  <td className="py-1.5">{vendorNotSet}</td>
+                  <td className="py-1.5 text-ink-soft">{restaurants.length ? Math.round((vendorNotSet / restaurants.length) * 100) : 0}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </>
+        )}
 
         <h3 className="mb-2 text-sm font-semibold">Flagged Issues</h3>
         {recs.length === 0 ? (

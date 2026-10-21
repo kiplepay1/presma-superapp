@@ -4,7 +4,7 @@ import { signOut } from "firebase/auth";
 import {
   LayoutDashboard, Store, Workflow, Bot, CheckSquare, MapPin,
   ListTodo, BarChart3, Settings,
-  Search, Bell, ChevronsLeftRight, ShieldCheck, LogOut, ClipboardCheck,
+  Search, Bell, ChevronsLeftRight, ShieldCheck, LogOut, ClipboardCheck, Plug,
 } from "lucide-react";
 import CommandBar from "./CommandBar";
 import NotificationPanel from "./NotificationPanel";
@@ -32,7 +32,9 @@ export default function Shell({ children }: { children: ReactNode }) {
   const { user, isAdmin } = useAuth();
   const { restaurants } = useRestaurants();
   const alertCount = buildRecommendations(restaurants).filter((r) => r.riskLevel !== "Green").length;
-  const nav = isAdmin ? [...NAV, { to: "/admin/access", label: "Access Control", icon: ShieldCheck }] : NAV;
+  const nav = isAdmin
+    ? [...NAV, { to: "/vendors", label: "Vendors", icon: Plug }, { to: "/admin/access", label: "Access Control", icon: ShieldCheck }]
+    : NAV;
   const initials = (user.displayName ?? user.email ?? "?").split(" ").map((s) => s[0]).slice(0, 2).join("").toUpperCase();
 
   useEffect(() => {
